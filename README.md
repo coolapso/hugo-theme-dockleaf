@@ -7,6 +7,11 @@ Features include responsive navigation, nested sections, a table of contents,
 syntax highlighting, hint boxes, configurable homepage cards, and local search.
 System fonts are the default; no external font or search services are used.
 
+## Live example
+
+See [Searchbase Documentation](https://docs.searchbase.md/) for a live example
+of the documentation layout Dockleaf was extracted from.
+
 ## Install
 
 Requires Hugo **0.168.0 or newer** (standard edition is sufficient).
@@ -132,8 +137,50 @@ assets, search index, nested navigation, and customization, and checks JavaScrip
 syntax when Node.js is installed. Python 3 and Hugo are required; Node.js is optional.
 No packages need installing.
 
+## Publishing on Hugo Themes
+
+Follow the [current submission guidelines](https://github.com/gohugoio/hugoThemesSiteBuilder#adding-a-theme)
+for [themes.gohugo.io](https://themes.gohugo.io/).
+
+Before submitting:
+
+- [ ] Publish the repository on a Go Modules-compatible Git host.
+- [ ] Complete root `theme.toml`: name, license, license URL, description,
+  homepage, tags, features, and author details; add `demosite` for the live example
+  and `[original]` attribution for the Searchbase source.
+- [x] Declare supported Hugo versions in `hugo.toml` under `[module.hugoVersion]`.
+- [x] Include an open-source license and preserve source attribution.
+- [x] Provide an English Markdown README covering installation and configuration;
+  use absolute URLs for embedded images.
+- [ ] Add `images/screenshot.png` or `.jpg`: at least **1500 × 1000** pixels.
+- [ ] Add `images/tn.png` or `.jpg`: at least **900 × 600** pixels.
+  Both images need a **3:2** aspect ratio, without browser chrome or device mockups.
+- [ ] Run `task test` with the latest Hugo before submission.
+- [ ] Push all submission files; if using releases, include them in the latest release.
+  Preserve published Git references and tags.
+- [ ] Fork [hugoThemesSiteBuilder](https://github.com/gohugoio/hugoThemesSiteBuilder),
+  add `github.com/coolapso/dockleaf` to `themes.txt` in lexicographical order,
+  and open a descriptive pull request. Ensure its Netlify preview succeeds.
+
+Keep the theme free, its README free of paid-product marketing, and maintain Hugo
+compatibility; themes without updates for 18 months may be removed. Derivatives
+must be notably different; explain their differences.
+
+Dockleaf turns Searchbase's project-specific layouts into configurable branding,
+menus, homepage cards, recursive navigation, and portable asset and search URLs.
+Its standalone `exampleSite/` demonstrates reuse without Searchbase content.
+The checklist records preparation work; it does not indicate acceptance or publication.
+
 ## License and origin
 
 GNU AGPLv3; see [LICENSE](LICENSE) and [NOTICE](NOTICE). Extracted from the
 [Searchbase](https://github.com/coolapso/searchbase) documentation theme.
 Searchbase content, branding, and artwork are not part of Dockleaf.
+
+## Support
+
+If you like this project and want to support / contribute in a different way you can always [:heart: Sponsor Me](https://github.com/sponsors/coolapso) or
+
+<a href="https://www.buymeacoffee.com/coolapso" target="_blank">
+  <img src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" />
+</a>
