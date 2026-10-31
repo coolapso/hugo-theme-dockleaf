@@ -144,7 +144,7 @@ No packages need installing.
 
 ## License and origin
 
-GNU AGPLv3; see [LICENSE](LICENSE) and [NOTICE](NOTICE). Extracted from the
+MIT; see [LICENSE](LICENSE) and [NOTICE](NOTICE). Extracted from the
 [Searchbase](https://github.com/coolapso/searchbase) documentation theme.
 Searchbase content, branding, and artwork are not part of Dockleaf.
 
