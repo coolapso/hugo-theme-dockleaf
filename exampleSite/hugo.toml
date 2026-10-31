@@ -1,11 +1,11 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://example.com/'
 locale = 'en-us'
 title = 'Dockleaf Documentation'
 theme = 'dockleaf'
 [params]
   brand = 'Dockleaf'
   description = 'A lightweight dark documentation theme for Hugo.'
-  footer = 'Built with [Dockleaf](https://github.com/coolapso/dockleaf).'
+  footer = 'Built with [Dockleaf](https://github.com/coolapso/hugo-theme-dockleaf).'
 [[menus.main]]
   name = 'Get started'
   pageRef = '/guide/getting-started'

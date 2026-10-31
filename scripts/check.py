@@ -5,6 +5,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 import shutil
 import subprocess
+import struct
+import tomllib
 import tempfile
 from urllib.parse import unquote, urlsplit
 
@@ -89,6 +91,21 @@ def check_site(source, *, theme_repo=None):
         print("Node.js not installed; skipped optional JavaScript syntax checks")
 
 
+def check_publication_assets(root):
+    metadata = tomllib.loads((root / "theme.toml").read_text())
+    for key in ("name", "license", "licenselink", "description", "homepage", "demosite", "tags", "features", "author", "original"):
+        assert metadata.get(key), f"Missing theme metadata: {key}"
+    assert metadata["homepage"] == "https://github.com/coolapso/hugo-theme-dockleaf"
+    for name, minimum in (("screenshot.png", (1500, 1000)), ("tn.png", (900, 600))):
+        data = (root / "images" / name).read_bytes()
+        assert data[:8] == b"\x89PNG\r\n\x1a\n", name
+        width, height = struct.unpack(">II", data[16:24])
+        assert width >= minimum[0] and height >= minimum[1], (name, width, height)
+        assert width * 2 == height * 3, (name, "Expected 3:2 aspect ratio")
+    print("Validated theme metadata and Hugo Themes preview images")
+
+
 if __name__ == "__main__":
     root = Path(__file__).resolve().parents[1]
+    check_publication_assets(root)
     check_site(root / "exampleSite", theme_repo=root)
