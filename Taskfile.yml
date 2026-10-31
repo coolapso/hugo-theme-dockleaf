@@ -1,0 +1,10 @@
+version: '3'
+tasks:
+  test:
+    desc: Validate the example at root and subdirectory URLs
+    cmds:
+      - python3 scripts/check.py
+  serve:
+    desc: Preview the example site
+    cmds:
+      - hugo server --source exampleSite --themesDir ../.. --theme dockleaf
