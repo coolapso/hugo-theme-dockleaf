@@ -1,10 +1,12 @@
 version: '3'
 tasks:
   test:
-    desc: Validate the example at root and subdirectory URLs
+    desc: Validate the example in every theme at root and subdirectory URLs
     cmds:
       - python3 scripts/check.py
   serve:
-    desc: Preview the example site
+    desc: "Preview the example site (another theme: task serve THEME=notekpr)"
+    env:
+      HUGO_PARAMS_THEME: '{{.THEME | default "searchbase"}}'
     cmds:
       - hugo server --source exampleSite --themesDir ../.. --theme dockleaf

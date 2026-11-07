@@ -6,5 +6,6 @@
       {{ with .Description }}<p class="lead">{{ . }}</p>{{ end }}
     </header>
     {{ .Content }}
+    {{ partial "edit-link.html" . }}
   </article>
 {{ end }}

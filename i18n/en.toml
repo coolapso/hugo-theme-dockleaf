@@ -33,3 +33,24 @@ other = "On This Page"
 
 [documentation]
 other = "Documentation"
+
+[editPage]
+other = "Edit this page"
+
+[anchor]
+other = "Link to this section"
+
+[copy]
+other = "Copy"
+
+[copied]
+other = "Copied"
+
+[notFound]
+other = "Page not found"
+
+[notFoundLead]
+other = "This page doesn't exist, or it has moved. Search the documentation or start again from the home page."
+
+[notFoundHome]
+other = "Go to the home page"

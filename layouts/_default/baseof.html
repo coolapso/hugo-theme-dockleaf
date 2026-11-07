@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="{{ site.Language.Locale | default site.Language.Lang }}">
+{{- $theme := partialCached "theme.html" . }}
+<html lang="{{ site.Language.Locale | default site.Language.Lang }}" data-dockleaf="{{ $theme.name }}"{{ if site.Params.copyCode }} data-copy="{{ i18n "copy" }}" data-copied="{{ i18n "copied" }}"{{ end }}>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,18 +8,16 @@
     <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} | {{ site.Title }}{{ end }}</title>
     {{ with site.Params.favicon }}<link rel="icon" href="{{ . | relURL }}">{{ end }}
     <link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
+    {{ with $theme.css }}<link rel="stylesheet" href="{{ .RelPermalink }}">{{ end }}
     {{ with resources.Get "css/custom.css" }}<link rel="stylesheet" href="{{ .RelPermalink }}">{{ end }}
   </head>
   <body>
     <a class="skip-link" href="#content">{{ i18n "skip" }}</a>
     <header class="topbar">
-      <a class="brand" href="{{ site.Home.RelPermalink }}">
-        {{ with site.Params.logo }}<img src="{{ . | relURL }}" alt="" width="36" height="36">{{ end }}
-        <span>{{ site.Params.brand | default site.Title }}</span>
-      </a>
+      {{ partial "brand.html" . }}
       <button class="nav-toggle" type="button" aria-label="{{ i18n "toggle" }}" aria-controls="sidebar" aria-expanded="false">{{ i18n "menu" }}</button>
       <nav class="toplinks" aria-label="{{ i18n "primary" }}">
-        {{ range site.Menus.main }}<a href="{{ .URL | relURL }}">{{ .Name }}</a>{{ end }}
+        {{ partial "menu-links.html" . }}
       </nav>
     </header>
     <div class="shell">
@@ -30,16 +29,13 @@
           <p id="search-status" class="search-status" role="status" data-error="{{ i18n "searchError" }}" data-empty="{{ i18n "searchEmpty" }}" data-loading="{{ i18n "searchLoading" }}"></p>
         </div>
         <nav class="side-nav">
-          <div class="mobile-links">{{ range site.Menus.main }}<a href="{{ .URL | relURL }}">{{ .Name }}</a>{{ end }}</div>
+          <div class="mobile-links">{{ partial "menu-links.html" . }}</div>
           {{ partial "navigation.html" (dict "pages" site.Home.Pages.ByWeight "current" .) }}
         </nav>
       </aside>
       <main id="content" class="content">
         {{ block "main" . }}{{ end }}
-        <footer class="site-footer">
-          {{ with site.Params.footer }}<p>{{ . | markdownify }}</p>{{ end }}
-          {{ with site.Menus.footer }}<nav aria-label="{{ i18n "footer" }}">{{ range . }}<a href="{{ .URL | relURL }}">{{ .Name }}</a>{{ end }}</nav>{{ end }}
-        </footer>
+        {{ partial "footer.html" . }}
       </main>
       {{ if and (not .IsHome) .Fragments.Headings }}
         <aside class="toc" aria-label="{{ i18n "toc" }}"><p>{{ i18n "toc" }}</p>{{ .TableOfContents }}</aside>

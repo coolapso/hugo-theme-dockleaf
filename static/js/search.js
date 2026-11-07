@@ -43,4 +43,12 @@
   input.addEventListener('keydown', event => {
     if (event.key === 'Escape') { ++generation; results.hidden = true; status.textContent = ''; }
   });
+  // "/" anywhere but in a field goes to the search box.
+  document.addEventListener('keydown', event => {
+    if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable]')) return;
+    if (!input.offsetParent) return;
+    event.preventDefault();
+    input.focus();
+  });
 })();

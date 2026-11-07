@@ -2,6 +2,7 @@
 """Validate a real Hugo site at domain-root and subdirectory URLs."""
 import json
 from html.parser import HTMLParser
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -30,7 +31,7 @@ class Document(HTMLParser):
             self.active.append(attrs.get("href"))
 
 
-def check_site(source, *, theme_repo=None):
+def check_site(source, *, theme_repo=None, themes=("searchbase",)):
     source = Path(source).resolve()
     with tempfile.TemporaryDirectory(prefix="dockleaf-check-") as directory:
         scratch = Path(directory)
@@ -39,7 +40,7 @@ def check_site(source, *, theme_repo=None):
             shutil.copytree(source, installed, ignore=shutil.ignore_patterns("public", "resources", ".hugo_build.lock"))
             theme = installed / "themes/dockleaf"
             theme.mkdir(parents=True)
-            for name in ("layouts", "static", "i18n", "hugo.toml", "theme.toml"):
+            for name in ("layouts", "static", "assets", "i18n", "hugo.toml", "theme.toml"):
                 origin = theme_repo / name
                 if origin.is_dir():
                     shutil.copytree(origin, theme / name)
@@ -49,11 +50,11 @@ def check_site(source, *, theme_repo=None):
             overrides = source / "assets/css/custom.css"
             overrides.parent.mkdir(parents=True)
             overrides.write_text(":root { --brand: #34d399; }\n")
-        for prefix in ("/", "/project/"):
-            destination = scratch / ("root" if prefix == "/" else "subdirectory")
+        for look, prefix in [(look, prefix) for look in themes for prefix in ("/", "/project/")]:
+            destination = scratch / look / ("root" if prefix == "/" else "subdirectory")
             command = ["hugo", "--source", str(source), "--destination", str(destination),
                        "--baseURL", "https://example.org" + prefix, "--panicOnWarning"]
-            subprocess.run(command, check=True)
+            subprocess.run(command, check=True, env=os.environ | {"HUGO_PARAMS_THEME": look})
             home = Document((destination / "index.html").read_text())
             assert home.search_index == prefix + "index.json", home.search_index
             pages = json.loads((destination / "index.json").read_text())
@@ -82,7 +83,19 @@ def check_site(source, *, theme_repo=None):
                 assert (destination / "guide/advanced/deployment/index.html").is_file()
                 assert prefix + "guide/advanced/deployment/" in [link for _, link in home.links]
                 assert prefix + "css/custom.css" in [link for _, link in home.links]
-            print(f"Validated {len(pages)} searchable pages at {prefix}")
+                assert (destination / "404.html").is_file()
+                stylesheet = prefix + f"dockleaf/themes/{look}/style.css"
+                if look == "searchbase":
+                    assert not (destination / "dockleaf").exists()
+                else:
+                    assert stylesheet in [link for _, link in home.links], (look, home.links)
+                    assert (destination / f"dockleaf/themes/{look}/style.css").is_file()
+            print(f"Validated {len(pages)} searchable pages at {prefix} with the {look} theme")
+        if theme_repo:
+            command = ["hugo", "--source", str(source), "--destination", str(scratch / "unknown")]
+            build = subprocess.run(command, capture_output=True, text=True, env=os.environ | {"HUGO_PARAMS_THEME": "nope"})
+            assert build.returncode and "Dockleaf has no theme" in build.stdout + build.stderr, build.stderr
+            print("Validated that an unknown theme stops the build")
     theme = theme_repo if theme_repo else source / "themes/dockleaf"
     if shutil.which("node"):
         for script in (theme / "static/js").glob("*.js"):
@@ -108,4 +121,4 @@ def check_publication_assets(root):
 if __name__ == "__main__":
     root = Path(__file__).resolve().parents[1]
     check_publication_assets(root)
-    check_site(root / "exampleSite", theme_repo=root)
+    check_site(root / "exampleSite", theme_repo=root, themes=("searchbase", "notekpr"))
